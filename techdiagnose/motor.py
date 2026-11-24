@@ -1,13 +1,13 @@
 from dataclasses import dataclass
 
-LIMIAR = 0.2  # CF mínimo para considerar uma premissa verdadeira
+LIMIAR_FRACO = 0.40  # abaixo disso o diagnóstico é só uma hipótese fraca
 
 
 @dataclass
 class Resultado:
-    fatos: dict       # fato -> CF final
-    disparos: list    # regras que dispararam, na ordem
-    respostas: dict   # fato -> True/False informado pelo usuário
+    fatos: dict       # memória de trabalho: fato -> CF
+    disparos: list    # rastro: regras que dispararam, na ordem
+    respostas: dict   # fato -> CF informado pelo usuário (False/None = não / não sei)
 
 
 def combinar_cf(a, b):
@@ -15,27 +15,52 @@ def combinar_cf(a, b):
     return a + b * (1 - a)
 
 
-def inferir(regras, respostas):
-    """Encadeamento para frente com fatores de certeza."""
-    fatos = {f: 1.0 for f, v in respostas.items() if v}
-    disparos, ja_disparou = [], set()
+def cf_premissas(regra, memoria):
+    # conjunção: a premissa mais fraca limita a regra
+    return min(memoria[p] for p in regra["se"])
 
-    mudou = True
-    while mudou:
-        mudou = False
-        for regra in regras:
-            if regra["id"] in ja_disparou:
-                continue
-            cfs = [fatos.get(p, 0.0) for p in regra["se"]]
-            if min(cfs) < LIMIAR:
-                continue
-            cf = min(cfs) * regra["cf"]
-            c = regra["entao"]
-            fatos[c] = combinar_cf(fatos[c], cf) if c in fatos else cf
-            ja_disparou.add(regra["id"])
-            disparos.append({"regra": regra, "cf": cf})
-            mudou = True
-    return Resultado(fatos, disparos, respostas)
+
+def casar(regras, memoria, disparadas):
+    """Match: regras não disparadas com todas as premissas na memória de trabalho."""
+    prontas = [
+        r for r in regras
+        if r["id"] not in disparadas and all(p in memoria for p in r["se"])
+    ]
+    # uma regra espera se outra regra pronta ainda vai reforçar uma premissa dela,
+    # senão ela dispararia com um CF que ainda não é o final (ex.: R17 antes da R16)
+    conclusoes = {r["entao"] for r in prontas}
+    return [r for r in prontas if not conclusoes & set(r["se"])]
+
+
+def escolher_regra(conflito):
+    """Resolução de conflito: mais premissas primeiro, depois maior CF."""
+    return max(conflito, key=lambda r: (len(r["se"]), r["cf"]))
+
+
+def disparar(regra, memoria, disparos):
+    cf_entrada = cf_premissas(regra, memoria)
+    cf = regra["cf"] * cf_entrada
+    conclusao = regra["entao"]
+    if conclusao in memoria:
+        memoria[conclusao] = combinar_cf(memoria[conclusao], cf)
+    else:
+        memoria[conclusao] = cf
+    disparos.append({"regra": regra, "cf": cf, "cf_premissas": cf_entrada})
+
+
+def inferir(regras, respostas):
+    """Encadeamento para frente: ciclo reconhecer-agir até o ponto fixo."""
+    # "não" e "não sei" ficam fora da memória; True vale 1.0
+    memoria = {f: float(v) for f, v in respostas.items() if v}
+    disparos, disparadas = [], set()
+
+    conflito = casar(regras, memoria, disparadas)
+    while conflito:
+        regra = escolher_regra(conflito)
+        disparar(regra, memoria, disparos)
+        disparadas.add(regra["id"])  # refração: cada regra dispara uma vez só
+        conflito = casar(regras, memoria, disparadas)
+    return Resultado(memoria, disparos, respostas)
 
 
 def diagnosticos(resultado):
@@ -44,9 +69,11 @@ def diagnosticos(resultado):
     for d in resultado.disparos:
         r = d["regra"]
         if r["tipo"] == "diagnostico":
+            cf = resultado.fatos[r["entao"]]
             achados[r["entao"]] = {
                 "fato": r["entao"],
-                "cf": resultado.fatos[r["entao"]],
+                "cf": cf,
+                "fraca": cf < LIMIAR_FRACO,
                 "solucao": r["solucao"],
                 "encaminhamento": r["encaminhamento"],
             }
