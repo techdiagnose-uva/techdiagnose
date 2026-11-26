@@ -94,6 +94,26 @@ def regras_descartadas(regras, respostas):
     return descartadas
 
 
+def categorias(regras):
+    return list(dict.fromkeys(r["categoria"] for r in regras))
+
+
+def proxima_pergunta(regras, perguntas, categoria, respostas):
+    """Próximo sintoma a perguntar, ou None quando não há mais o que perguntar.
+
+    Só olha as regras da categoria que ainda podem disparar, na ordem do JSON,
+    e pula sintomas já respondidos.
+    """
+    descartadas = regras_descartadas(regras, respostas)
+    for regra in regras:
+        if regra["categoria"] != categoria or regra["id"] in descartadas:
+            continue
+        for premissa in regra["se"]:
+            if premissa in perguntas and premissa not in respostas:
+                return premissa
+    return None
+
+
 def diagnosticos(resultado):
     """Conclusões finais (regras tipo 'diagnostico'), da mais à menos certa."""
     achados = {}
