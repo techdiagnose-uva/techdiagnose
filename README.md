@@ -24,7 +24,7 @@ São 5 categorias de problema, cobertas por 32 regras (`dados/regras.json`):
 
 - **Base de conhecimento** (`dados/`): as regras ficam em `regras.json` e as perguntas em `perguntas.json`, separadas do código. Dá para mudar o conhecimento sem mexer no Python.
 - **Motor de inferência** (`techdiagnose/motor.py`): encadeamento para frente. Ele aplica as regras repetidamente até nenhuma regra nova disparar (ponto fixo), e cada regra dispara uma vez só (refração).
-- **Fatores de certeza (CF)**: cada regra tem um CF entre 0 e 1. Quando duas regras chegam na mesma conclusão, as certezas se somam (`a + b * (1 - a)`). Premissas com CF abaixo de 0.2 são ignoradas.
+- **Fatores de certeza (CF)**: cada regra tem um CF entre 0 e 1. Quando duas regras chegam na mesma conclusão, as certezas se somam (`a + b * (1 - a)`). A resposta "provavelmente" vale 0.6, e um diagnóstico com CF abaixo de 0.40 aparece como hipótese fraca.
 - **Explicação**: o sistema responde **"por quê?"** (por que está fazendo aquela pergunta) e **"como?"** (qual cadeia de regras levou ao diagnóstico).
 - **Histórico** (`dados/historico_atendimentos.csv`): 200 atendimentos fictícios da TechFix, usados para mostrar quantas vezes cada problema aparece e o tempo e o custo médios de cada um.
 
@@ -97,5 +97,5 @@ techdiagnose/
 | Nome | GitHub |
 |---|---|
 | João Gabriel | [@Auguxtow](https://github.com/Auguxtow) |
-| [nome] | [@L0zart](https://github.com/L0zart) |
-| Rafael | [@szpeeKi](https://github.com/szpeeKi) |
+| Rafael Ribeiro | [@L0zart](https://github.com/L0zart) |
+| Rafael Pinto | [@szpeeKi](https://github.com/szpeeKi) |
