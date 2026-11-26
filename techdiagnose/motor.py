@@ -63,6 +63,37 @@ def inferir(regras, respostas):
     return Resultado(memoria, disparos, respostas)
 
 
+def motivo_descarte(regra, regras, respostas, descartadas):
+    for premissa in regra["se"]:
+        if premissa in respostas and not respostas[premissa]:
+            resposta = "não" if respostas[premissa] is False else "não sei"
+            return f"{premissa} respondido '{resposta}'"
+        produtoras = [r for r in regras if r["entao"] == premissa]
+        if produtoras and all(r["id"] in descartadas for r in produtoras):
+            return f"nenhuma regra pode mais concluir {premissa}"
+    return None
+
+
+def regras_descartadas(regras, respostas):
+    """Regras que não podem mais disparar -> motivo.
+
+    Repete até não descartar mais nada, porque descartar uma regra pode tornar
+    impossível um intermediário e, com ele, as regras que dependem dele.
+    """
+    descartadas = {}
+    mudou = True
+    while mudou:
+        mudou = False
+        for regra in regras:
+            if regra["id"] in descartadas:
+                continue
+            motivo = motivo_descarte(regra, regras, respostas, descartadas)
+            if motivo:
+                descartadas[regra["id"]] = motivo
+                mudou = True
+    return descartadas
+
+
 def diagnosticos(resultado):
     """Conclusões finais (regras tipo 'diagnostico'), da mais à menos certa."""
     achados = {}
