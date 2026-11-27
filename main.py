@@ -22,7 +22,11 @@ def main():
         print(f"Aviso: histórico indisponível ({erro}). Seguindo sem estatísticas.")
         atendimentos = None
 
-    executar(regras, perguntas, atendimentos)
+    try:
+        executar(regras, perguntas, atendimentos)
+    except (KeyboardInterrupt, EOFError):
+        # Ctrl+C ou fim da entrada: sai sem mostrar erro do Python
+        print("\n\nAtendimento encerrado. Até logo!")
     return 0
 
 
