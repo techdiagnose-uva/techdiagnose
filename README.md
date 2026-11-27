@@ -99,6 +99,6 @@ techdiagnose/
 
 | Nome | GitHub |
 |---|---|
-| João Gabriel | [@Auguxtow](https://github.com/Auguxtow) |
-| Rafael Ribeiro | [@L0zart](https://github.com/L0zart) |
-| Rafael Pinto | [@szpeeKi](https://github.com/szpeeKi) |
+| João Gabriel Augusto Cardoso - 1250108567 | [@Auguxtow](https://github.com/Auguxtow) |
+| Rafael Ribeiro de Souza - 1250110204 | [@L0zart](https://github.com/L0zart) |
+| Rafael Pinto de Souza Salgueiro - 1250109417| [@szpeeKi](https://github.com/szpeeKi) |
