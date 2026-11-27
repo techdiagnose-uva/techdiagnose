@@ -86,10 +86,13 @@ techdiagnose/
 │   └── historico_atendimentos.csv
 ├── techdiagnose/
 │   ├── base_conhecimento.py    # carrega e valida os JSON
-│   ├── motor.py                # inferência, CF e explicações
+│   ├── motor.py                # encadeamento para frente e fatores de certeza
+│   ├── explicacao.py           # "por quê?" e "como?"
+│   ├── interface_console.py    # perguntas e respostas no terminal
 │   └── estatisticas.py         # frequência, tempo e custo médio
 ├── tests/                      # testes com pytest
-└── docs/                       # documentação técnica
+└── docs/
+    └── documentacao_tecnica.md # documentação técnica
 ```
 
 ## Integrantes
