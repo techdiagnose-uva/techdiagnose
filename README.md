@@ -8,6 +8,10 @@ Trabalho da disciplina **Programação de Sistemas Especialistas**, Universidade
 
 🔗 Versão web: https://techdiagnose-dsy6edz5dnhujzrk2zuvuk.streamlit.app/
 
+Contexto de negócio
+
+A TechFix recebe todos os dias clientes com defeitos de computador e perde tempo na triagem inicial: é preciso descobrir a causa provável, decidir se dá para resolver por atendimento remoto ou se o equipamento precisa vir para a bancada, e estimar tempo e custo. O TechDiagnose automatiza essa triagem, registrando o conhecimento do técnico em regras e justificando cada conclusão.
+
 ## O que ele diagnostica
 
 São 5 categorias de problema, cobertas por 32 regras (`dados/regras.json`):
@@ -74,6 +78,12 @@ python -m techdiagnose.estatisticas
 pytest
 ```
 
+## Exemplos para testar
+Cenário	Respostas	Resultado esperado
+Fonte queimada	Inicialização: não liga = sim, testou outra tomada = sim, computador de mesa = sim	Fonte queimada, certeza 72%
+Duas regras na mesma conclusão	Superaquecimento: desliga sozinho, ventoinha barulhenta, sem limpeza há mais de 1 ano e lento ao esquentar = sim	Poeira e pasta térmica, certeza de cerca de 76% (R17 e R21 combinadas)
+Sem conclusão	Qualquer categoria, todas as respostas "não"	"Não foi possível concluir com as informações fornecidas"
+
 ## Estrutura do projeto
 
 ```
@@ -94,6 +104,16 @@ techdiagnose/
 └── docs/
     └── documentacao_tecnica.md # documentação técnica
 ```
+## Documentação técnica
+
+O dicionário de fatos, a tabela das 32 regras, o funcionamento do motor, o módulo de explicação, o tratamento de exceções, como adicionar uma regra e as limitações do sistema estão em docs/documentacao_tecnica.md.
+
+## Limitações
+
+Só encadeamento para frente; não há encadeamento para trás.
+As premissas das regras são só conjunções (E), sem OU nem negação.
+O CF das respostas é fixo (1.0 e 0.6).
+O conhecimento cobre 22 defeitos comuns; casos fora deles terminam em "não foi possível concluir".
 
 ## Integrantes
 
