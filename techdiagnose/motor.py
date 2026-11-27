@@ -132,23 +132,3 @@ def diagnosticos(resultado):
                 "encaminhamento": r["encaminhamento"],
             }
     return sorted(achados.values(), key=lambda x: x["cf"], reverse=True)
-
-
-def explicar(resultado, fato, nivel=0):
-    """COMO: monta a cadeia de regras e fatos que levou à conclusão."""
-    recuo = "  " * nivel
-    if resultado.respostas.get(fato):
-        return f"{recuo}- {fato}: informado pelo usuário"
-    linhas = []
-    for d in resultado.disparos:
-        r = d["regra"]
-        if r["entao"] == fato:
-            linhas.append(f"{recuo}- {fato} (CF {d['cf']:.2f}) pela {r['id']}: {r['descricao']}")
-            for premissa in r["se"]:
-                linhas.append(explicar(resultado, premissa, nivel + 1))
-    return "\n".join(linhas)
-
-
-def porque(regras, fato):
-    """POR QUE: quais regras usam este fato, ou seja, por que perguntamos."""
-    return [r for r in regras if fato in r["se"]]

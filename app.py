@@ -1,6 +1,7 @@
 import streamlit as st
 from techdiagnose.base_conhecimento import carregar_base, ErroBaseConhecimento
-from techdiagnose.motor import inferir, diagnosticos, explicar, porque
+from techdiagnose.motor import inferir, diagnosticos
+from techdiagnose.explicacao import explicar, porque
 
 st.set_page_config(page_title="TechDiagnose", page_icon="🛠️")
 st.title("TechDiagnose")
