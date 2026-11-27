@@ -1,3 +1,5 @@
+import unicodedata
+
 from techdiagnose.motor import categorias, proxima_pergunta, inferir, diagnosticos
 from techdiagnose.explicacao import explicar_pergunta, explicar_raciocinio, explicar
 from techdiagnose.estatisticas import resumo_diagnostico, formatar_reais
@@ -12,8 +14,15 @@ NOMES_CATEGORIA = {
     "internet": "Sem internet",
 }
 
-RESPOSTAS = {"sim": 1.0, "provavelmente": 0.6, "não": False, "não sei": None}
+# chaves já normalizadas (minúsculas e sem acento)
+RESPOSTAS = {
+    "sim": 1.0, "s": 1.0,
+    "provavelmente": 0.6, "p": 0.6, "talvez": 0.6,
+    "nao": False, "n": False,
+    "nao sei": None, "ns": None,
+}
 PORQUE = "porque"
+OPCOES = "sim (s), provavelmente (p), não (n), não sei (ns) ou ? para saber o porquê"
 
 
 def tela_inicial():
@@ -25,26 +34,36 @@ def tela_inicial():
     print("a solução e se dá para resolver por atendimento remoto ou se o")
     print("computador precisa vir para a bancada.")
     print()
-    print("Responda com: sim, provavelmente, não ou não sei.")
+    print("Responda com: sim (s), provavelmente (p), não (n) ou não sei (ns).")
     print("Digite ? em qualquer pergunta para saber por que estou perguntando.")
+    print("Para sair a qualquer momento, aperte Ctrl+C.")
+
+
+def normalizar(texto):
+    """'  NÃO   Sei ' -> 'nao sei': minúsculas, sem acento e sem espaços sobrando."""
+    sem_acento = unicodedata.normalize("NFD", texto).encode("ascii", "ignore").decode()
+    return " ".join(sem_acento.lower().split())
 
 
 def ler_resposta(texto):
+    """Repete a pergunta até a resposta ser válida."""
     while True:
-        resposta = input(f"\n{texto}\n> ").strip().lower()
-        if resposta == "?":
+        resposta = normalizar(input(f"\n{texto}\n> "))
+        if resposta == "?" or resposta.rstrip("?").strip() in ("por que", "porque"):
             return PORQUE
         if resposta in RESPOSTAS:
             return RESPOSTAS[resposta]
-        print("Resposta inválida. Use: sim, provavelmente, não, não sei ou ?")
+        print(f"Não entendi. Responda com: {OPCOES}.")
 
 
 def ler_sim_nao(texto):
     while True:
-        resposta = input(f"\n{texto} (sim/não)\n> ").strip().lower()
-        if resposta in ("sim", "não"):
-            return resposta == "sim"
-        print("Responda sim ou não.")
+        resposta = normalizar(input(f"\n{texto} (sim/não)\n> "))
+        if resposta in ("sim", "s"):
+            return True
+        if resposta in ("nao", "n"):
+            return False
+        print("Não entendi. Responda sim ou não.")
 
 
 def escolher_categoria(regras):
