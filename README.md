@@ -64,7 +64,9 @@ python main.py
 streamlit run app.py
 ```
 
-Abre sozinho no navegador, em http://localhost:8501.
+Ele abre no navegador. O endereço aparece no terminal em **Local URL** (normalmente `http://localhost:8501`) e só funciona enquanto o comando estiver rodando. Para parar, use `Ctrl+C`.
+
+Para usar sem instalar nada, acesse a [versão web](https://techdiagnose-dsy6edz5dnhujzrk2zuvuk.streamlit.app/).
 
 **Estatísticas do histórico de atendimentos:**
 
