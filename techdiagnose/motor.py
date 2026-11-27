@@ -15,11 +15,6 @@ def combinar_cf(a, b):
     return a + b * (1 - a)
 
 
-def cf_premissas(regra, memoria):
-    # conjunção: a premissa mais fraca limita a regra
-    return min(memoria[p] for p in regra["se"])
-
-
 def casar(regras, memoria, disparadas):
     """Match: regras não disparadas com todas as premissas na memória de trabalho."""
     prontas = [
@@ -38,14 +33,22 @@ def escolher_regra(conflito):
 
 
 def disparar(regra, memoria, disparos):
-    cf_entrada = cf_premissas(regra, memoria)
-    cf = regra["cf"] * cf_entrada
+    premissas = {p: memoria[p] for p in regra["se"]}
+    # conjunção: a premissa mais fraca limita a regra
+    cf = regra["cf"] * min(premissas.values())
     conclusao = regra["entao"]
-    if conclusao in memoria:
-        memoria[conclusao] = combinar_cf(memoria[conclusao], cf)
-    else:
+    cf_antes = memoria.get(conclusao)
+    if cf_antes is None:
         memoria[conclusao] = cf
-    disparos.append({"regra": regra, "cf": cf, "cf_premissas": cf_entrada})
+    else:
+        memoria[conclusao] = combinar_cf(cf_antes, cf)
+    disparos.append({
+        "regra": regra,
+        "cf": cf,
+        "premissas": premissas,
+        "cf_antes": cf_antes,
+        "cf_final": memoria[conclusao],
+    })
 
 
 def inferir(regras, respostas):
