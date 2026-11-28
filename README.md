@@ -90,23 +90,23 @@ Sem conclusão	Qualquer categoria, todas as respostas "não"	"Não foi possível
 
 **Console: diagnóstico com fatores de certeza**
 
-![Diagnóstico no console](docs/imagens/console-diagnostico.png)
+![Diagnóstico no console](console-diagnostico.png)
 
 **Console: o sistema explica por que faz cada pergunta ("por quê?")**
 
-![Por quê no console](docs/imagens/console-porque.png)
+![Por quê no console](console-porque.png)
 
 **Console: o sistema explica como chegou à conclusão ("como?")**
 
-![Como no console](docs/imagens/console-como.png)
+![Como no console](console-como.png)
 
 **Interface web**
 
-![Interface web](docs/imagens/app-web.png)
+![Interface web](app-web.png)
 
 **Testes automatizados**
 
-![Testes passando](docs/imagens/testes.png)
+![Testes passando](testes.png)
 
 ## Estrutura do projeto
 
