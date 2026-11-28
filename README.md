@@ -86,6 +86,28 @@ Fonte queimada	Inicialização: não liga = sim, testou outra tomada = sim, comp
 Duas regras na mesma conclusão	Superaquecimento: desliga sozinho, ventoinha barulhenta, sem limpeza há mais de 1 ano e lento ao esquentar = sim	Poeira e pasta térmica, certeza de cerca de 76% (R17 e R21 combinadas)
 Sem conclusão	Qualquer categoria, todas as respostas "não"	"Não foi possível concluir com as informações fornecidas"
 
+## Demonstração
+
+**Console: diagnóstico com fatores de certeza**
+
+![Diagnóstico no console](docs/imagens/console-diagnostico.png)
+
+**Console: o sistema explica por que faz cada pergunta ("por quê?")**
+
+![Por quê no console](docs/imagens/console-porque.png)
+
+**Console: o sistema explica como chegou à conclusão ("como?")**
+
+![Como no console](docs/imagens/console-como.png)
+
+**Interface web**
+
+![Interface web](docs/imagens/app-web.png)
+
+**Testes automatizados**
+
+![Testes passando](docs/imagens/testes.png)
+
 ## Estrutura do projeto
 
 ```
